@@ -2,7 +2,8 @@
 {
     public class Eevee:Pokemon
     {
-        public Eevee(int _Hp, int _Exp) {
+        public Eevee(int _Hp, int _Exp)
+        {
             Name = "Eevee";
             Hp = _Hp;
             Exp = _Exp;

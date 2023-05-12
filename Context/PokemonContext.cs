@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 
 namespace PokemonPocket
@@ -13,9 +8,11 @@ namespace PokemonPocket
         static readonly string connectionString = "Server=localhost; User ID=pokemon; Password=pokemon; Database=pokemon";
 
         public DbSet<Pokemon> Pokemons { get; set; }
+        public DbSet<Trainer> Trainers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
             optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }

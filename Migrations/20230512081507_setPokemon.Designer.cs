@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokemonPocket;
 
@@ -10,9 +11,11 @@ using PokemonPocket;
 namespace PokemonPocket.Migrations
 {
     [DbContext(typeof(PokemonDataContext))]
-    partial class PokemonDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230512081507_setPokemon")]
+    partial class setPokemon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

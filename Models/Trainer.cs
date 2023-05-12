@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace PokemonPocket
 {
-    internal class Trainer
+    public class Trainer
     {
         public int TrainerId { get; set; }
         public string Name { get; set; }
+        public virtual ICollection<Pokemon> Pokemons { get; set; }
+
+        public Trainer()
+        {
+            //Name = name;
+            Pokemons = new List<Pokemon>();
+        }
     }
 }

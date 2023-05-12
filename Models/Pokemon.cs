@@ -12,5 +12,6 @@ namespace PokemonPocket
         public int Exp { get; set; }
         public string Skill { get; set; }
         public int Damage { get; set; }
+        public virtual Trainer Trainer { get; set; }
     }
 }

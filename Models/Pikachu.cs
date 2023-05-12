@@ -2,7 +2,8 @@
 {
     public class Pikachu:Pokemon
     {
-        public Pikachu(int _Hp, int _Exp) {
+        public Pikachu(int _Hp, int _Exp)
+        {
             Name = "Pikachu";
             Hp = _Hp;
             Exp = _Exp;
