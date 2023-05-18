@@ -11,8 +11,8 @@ using PokemonPocket;
 namespace PokemonPocket.Migrations
 {
     [DbContext(typeof(PokemonDataContext))]
-    [Migration("20230512081910_InitList")]
-    partial class InitList
+    [Migration("20230515091912_init_v3")]
+    partial class init_v3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,9 +31,6 @@ namespace PokemonPocket.Migrations
                     b.Property<int>("Damage")
                         .HasColumnType("int");
 
-                    b.Property<string>("EvolveTo")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("Exp")
                         .HasColumnType("int");
 
@@ -42,9 +39,6 @@ namespace PokemonPocket.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
-
-                    b.Property<int>("NoToEvolve")
-                        .HasColumnType("int");
 
                     b.Property<string>("Skill")
                         .HasColumnType("longtext");

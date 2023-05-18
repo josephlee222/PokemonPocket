@@ -28,9 +28,6 @@ namespace PokemonPocket.Migrations
                     b.Property<int>("Damage")
                         .HasColumnType("int");
 
-                    b.Property<string>("EvolveTo")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("Exp")
                         .HasColumnType("int");
 
@@ -39,9 +36,6 @@ namespace PokemonPocket.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
-
-                    b.Property<int>("NoToEvolve")
-                        .HasColumnType("int");
 
                     b.Property<string>("Skill")
                         .HasColumnType("longtext");

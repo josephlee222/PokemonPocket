@@ -2,20 +2,15 @@
 {
     public class Pikachu:Pokemon
     {
-        public Pikachu(int _Hp, int _Exp)
+        public Pikachu(string Name, int Hp, int Exp): base(Name, Hp, Exp)
         {
-            Name = "Pikachu";
-            Hp = _Hp;
-            Exp = _Exp;
             Skill = "Lightning Bolt";
             Damage = 25;
-            EvolveTo = "Raichu";
-            NoToEvolve = 2;
         }
 
-        public int calculateDamage()
+        public void calculateDamage()
         {
-            return Damage * 1;
+            this.Hp = this.Hp - (Damage * 1);
         }
     }
 }

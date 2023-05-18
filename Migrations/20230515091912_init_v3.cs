@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PokemonPocket.Migrations
 {
     /// <inheritdoc />
-    public partial class trainerCreation : Migration
+    public partial class init_v3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,9 +37,6 @@ namespace PokemonPocket.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    EvolveTo = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    NoToEvolve = table.Column<int>(type: "int", nullable: false),
                     Hp = table.Column<int>(type: "int", nullable: false),
                     Exp = table.Column<int>(type: "int", nullable: false),
                     Skill = table.Column<string>(type: "longtext", nullable: true)

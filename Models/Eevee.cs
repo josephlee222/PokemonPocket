@@ -2,20 +2,15 @@
 {
     public class Eevee:Pokemon
     {
-        public Eevee(int _Hp, int _Exp)
+        public Eevee(string Name, int Hp, int Exp) : base(Name, Hp, Exp)
         {
-            Name = "Eevee";
-            Hp = _Hp;
-            Exp = _Exp;
             Skill = "Run Away";
             Damage = 20;
-            EvolveTo = "Sylveon";
-            NoToEvolve = 3;
         }
 
-        public int calculateDamage()
+        public void calculateDamage()
         {
-            return Damage * 2;
+            this.Hp = this.Hp - (Damage * 2);
         }
     }
 }
