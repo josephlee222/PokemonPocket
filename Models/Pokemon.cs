@@ -28,7 +28,7 @@ namespace PokemonPocket
 
         public Pokemon(string name, int hp, int exp)
         { 
-            this.Name=name;
+            this.Name = name;
             this.Hp = hp;
             this.Exp = exp;
         }

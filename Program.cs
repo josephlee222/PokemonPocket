@@ -128,6 +128,8 @@ namespace PokemonPocket
                     Console.WriteLine("(1). View " + trainer.Name + "'s Pokemon");
                     Console.WriteLine("(2). Edit Trainer Name");
                     Console.WriteLine("(3). Delete Trainer");
+                    Console.WriteLine("(4). View Trade Requests");
+                    Console.WriteLine("(5). Create Trade Request");
                     Console.WriteLine("(b). Main Menu");
                     String choice = input("Please only enter options listed: ");
 
@@ -144,6 +146,14 @@ namespace PokemonPocket
                         case "3":
                             // Delete trainer
                             deleteTrainer();
+                            break;
+                        case "4":
+                            // Evolve pokemon
+                            checkTrade();
+                            break;
+                        case "5":
+                            // Evolve pokemon
+                            createTrade();
                             break;
                         case "b":
                             // Back to main menu
@@ -201,6 +211,8 @@ namespace PokemonPocket
                         {
                             context.Pokemons.Remove(p);
                         }
+                        List<Trade> trades = context.Trades.Where(t => t.FromTrainer == trainerId || t.ToTrainer == trainerId).ToList();
+                        context.Trades.RemoveRange(trades);
                         context.Trainers.Remove(new Trainer { TrainerId = trainerId });
                         context.SaveChanges();
                     }
@@ -225,7 +237,7 @@ namespace PokemonPocket
                     Console.WriteLine("(2). List pokemon(s) in my pocket");
                     Console.WriteLine("(3). Check if I can evolve pokemon");
                     Console.WriteLine("(4). Evolve pokemon");
-                    String choice = input("Please only enter options [1, 2, 3, 4] or 'b' to logout: ");
+                    String choice = input("Please only enter options [1 - 4] or 'b' to logout: ");
 
                     switch (choice.ToLower())
                     {
@@ -413,6 +425,288 @@ namespace PokemonPocket
                 {
                     Console.WriteLine("No pokemon to evolve yet...");
                 }
+            }
+
+            void checkTrade()
+            {
+                int tradeId = 0;
+                Trade trade = new Trade(0,0,0,0);
+                Clear();
+                using (var context = new PokemonDataContext())
+                {
+                    List<Trade> list = context.Trades.Where(t => t.ToTrainer == trainerId).ToList();
+                    foreach (Trade t in list)
+                    {
+                        string from = context.Trainers.Find(t.FromTrainer).Name;
+                        string to = context.Trainers.Find(t.ToTrainer).Name;
+                      
+                        Console.WriteLine("--------------------------");
+                        Console.WriteLine("Trade ID: " + t.TradeId);
+                        Console.WriteLine("From: " + from);
+                        Console.WriteLine("To: " + to);
+                        Console.WriteLine("--------------------------");
+                    }
+
+                    if (list.Count() == 0)
+                    {
+                        Clear();
+                        Console.WriteLine("You do not have any trade requests yet...");
+                        return;
+                    }
+
+                    while (true)
+                    {
+                        try
+                        {
+                            tradeId = int.Parse(input("Enter trade ID to view its details: "));
+                            trade = context.Trades.Find(tradeId);
+                            if (trade == null)
+                            {
+                                throw new Exception();
+                            }
+                            break;
+                        } catch (Exception)
+                        {
+                            Console.WriteLine("Trade ID is not valid");
+                            continue;
+                        }
+                    }
+
+                    // Display trade details
+                    Clear();
+                    Console.WriteLine("Trade Details: ");
+                    Console.WriteLine("--------------------------");
+                    Console.WriteLine("Trade ID: " + trade.TradeId);
+                    Console.WriteLine("From: " + context.Trainers.Find(trade.FromTrainer).Name);
+                    Console.WriteLine("To: " + context.Trainers.Find(trade.ToTrainer).Name);
+                    Console.WriteLine("--------------------------");
+                    
+                    Pokemon to_p = context.Pokemons.Find(trade.ToPokemon);
+                    Pokemon from_p = context.Pokemons.Find(trade.FromPokemon);
+                    Console.WriteLine("Pokemon to Give:");
+                    Console.WriteLine("Name: " + to_p.Name);
+                    Console.WriteLine("HP: " + to_p.Hp);
+                    Console.WriteLine("EXP: " + to_p.Exp);
+                    Console.WriteLine("--------------------------");
+                    Console.WriteLine("Pokemon to Receive:");
+                    Console.WriteLine("Name: " + from_p.Name);
+                    Console.WriteLine("HP: " + from_p.Hp);
+                    Console.WriteLine("EXP: " + from_p.Exp);
+                    Console.WriteLine("--------------------------");
+
+                    Console.WriteLine("1. Accept");
+                    Console.WriteLine("2. Reject");
+                    Console.WriteLine("3. Back");
+                    try
+                    {
+                        int choice = int.Parse(input("Enter choice: "));
+                        switch (choice)
+                        {
+                            case 1:
+                                // Accept trade, swap pokemon and delete trade
+                                // change foreign key to trainer id
+                                to_p.Trainer = context.Trainers.Find(trade.FromTrainer);
+                                from_p.Trainer = context.Trainers.Find(trade.ToTrainer);
+                                context.SaveChanges();
+                                context.Trades.Remove(trade);
+                                context.SaveChanges();
+                                Clear();
+                                Console.WriteLine("Trade accepted!");
+                                break;
+                            case 2:
+                                // Delete trade
+                                context.Trades.Remove(trade);
+                                context.SaveChanges();
+                                Clear();
+                                Console.WriteLine("Trade rejected!");
+                                break;
+                            case 3:
+                                Clear();
+                                return;
+                            default:
+                                throw new Exception();
+                        }
+                    } catch (Exception)
+                    {
+                        Console.WriteLine("Invalid choice");
+                        return;
+                    }
+                }   
+            }
+
+            void createTrade()
+            {
+                Clear();
+                int to_p = 0;
+                int from_p = 0;
+                int to_t = 0;
+                int from_t = 0;
+
+                // Set from_t to current trainer
+                using (var context = new PokemonDataContext())
+                {
+                    from_t = context.Trainers.Find(trainerId).TrainerId;
+
+                    // Check if the current trainer has any pokemon
+                    if (context.Trainers.Include(t => t.Pokemons).FirstOrDefault(t => t.TrainerId == trainerId).Pokemons.Count() == 0)
+                    {
+                        Console.WriteLine("You do not have any pokemon to trade...");
+                        return;
+                    }
+                }
+
+                // List all trainers to trade with
+                Console.WriteLine("Trainers available to trade with:");
+                using (var context = new PokemonDataContext())
+                {
+                    var list = context.Trainers.Where(t => t.TrainerId != trainerId).ToList();
+                    foreach (Trainer t in list)
+                    {
+                        Console.WriteLine("--------------------------");
+                        Console.WriteLine("Trainer ID: " + t.TrainerId);
+                        Console.WriteLine("Trainer Name: " + t.Name);
+                        Console.WriteLine("--------------------------");
+                    }
+
+                    // Set to_t to selected trainer
+                    while (true)
+                    {
+                        try
+                        {
+                            int to_t_id = int.Parse(input("Enter Trainer ID to trade with: "));
+                            // Check if the selected trainer is the current trainer
+
+                            if (to_t_id == trainerId)
+                            {
+                                Console.WriteLine("You cannot trade with yourself");
+                                continue;
+                            }
+
+                            to_t = context.Trainers.Find(to_t_id).TrainerId;
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Trainer ID is not valid");
+                            continue;
+                        }
+                    }
+
+                    // Check if the selected trainer has any pokemon
+                    if (context.Trainers.Include(t => t.Pokemons).FirstOrDefault(t => t.TrainerId == to_t).Pokemons.Count() == 0)
+                    {
+                        Clear();
+                        Console.WriteLine("The selected trainer does not have any pokemon to trade...");
+                        return;
+                    }
+                }
+                
+                // List current trainer's pokemon to trade with ID
+                Clear();
+                Console.WriteLine("My Pokemon available to trade:");
+                using (var context = new PokemonDataContext())
+                {
+                    var list = context.Trainers.Include(t => t.Pokemons).FirstOrDefault(x => x.TrainerId == trainerId).Pokemons.ToList();
+                    foreach (Pokemon p in list)
+                    {
+                        Console.WriteLine("--------------------------");
+                        Console.WriteLine("Pokemon ID: " + p.PokemonId);
+                        Console.WriteLine("Name: " + p.Name);
+                        Console.WriteLine("HP: " + p.Hp);
+                        Console.WriteLine("EXP: " + p.Exp);
+                        Console.WriteLine("Skill: " + p.Skill);
+                        Console.WriteLine("--------------------------");
+                    }
+
+                    // Set from_p to selected pokemon
+                    if (list.Count() == 0)
+                    {
+                        Console.WriteLine("You do not have any pokemon yet...");
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                int from_p_id = int.Parse(input("Enter Pokemon ID to trade: "));
+                                from_p = context.Trainers.Find(trainerId).Pokemons.ToList().Where(p => p.PokemonId == from_p_id).FirstOrDefault().PokemonId;
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Pokemon ID is not valid");
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                // List selected trainer's pokemon to trade with ID
+                Clear();
+                Console.WriteLine("Select the other person's Pokemon to trade with:");
+                using (var context = new PokemonDataContext())
+                {
+                    var list = context.Trainers.Include(t => t.Pokemons).FirstOrDefault(x => x.TrainerId == to_t).Pokemons.ToList();
+                    foreach (Pokemon p in list)
+                    {
+                        Console.WriteLine("--------------------------");
+                        Console.WriteLine("Pokemon ID: " + p.PokemonId);
+                        Console.WriteLine("Name: " + p.Name);
+                        Console.WriteLine("HP: " + p.Hp);
+                        Console.WriteLine("EXP: " + p.Exp);
+                        Console.WriteLine("Skill: " + p.Skill);
+                        Console.WriteLine("--------------------------");
+                    }
+
+                    // Set to_p to selected pokemon
+                    if (list.Count() == 0)
+                    {
+                        Console.WriteLine("The selected user does not have any pokemons yet...");
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                int to_p_id = int.Parse(input("Enter Pokemon ID to trade: "));
+                                to_p = context.Trainers.Find(to_t).Pokemons.ToList().Where(p => p.PokemonId == to_p_id).FirstOrDefault().PokemonId;
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                Console.WriteLine("Pokemon ID is not valid");
+                                continue;
+                            }
+                        }
+                    }
+                }
+
+                // check if pokemon is already in trade
+                using (var context = new PokemonDataContext())
+                {
+                    var list = context.Trades.ToList();
+                    foreach (Trade t in list)
+                    {
+                        if (t.FromPokemon == from_p || t.ToPokemon == to_p || t.FromPokemon == to_p || t.ToPokemon == from_p)
+                        {
+                            Clear();
+                            Console.WriteLine("Pokemon selected is already in another trade request");
+                            return;
+                        }
+                    }
+                }   
+                
+                using (var context = new PokemonDataContext())
+                {
+                    Trade trade = new Trade(to_t, from_t, to_p, from_p);    
+                    context.Trades.Add(trade);
+                    context.SaveChanges();
+                }
+
+                Clear();
+                Console.WriteLine("Trade request sent!");
             }
         }
 

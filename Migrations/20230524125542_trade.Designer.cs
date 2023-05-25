@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PokemonPocket;
 
@@ -10,9 +11,11 @@ using PokemonPocket;
 namespace PokemonPocket.Migrations
 {
     [DbContext(typeof(PokemonDataContext))]
-    partial class PokemonDataContextModelSnapshot : ModelSnapshot
+    [Migration("20230524125542_trade")]
+    partial class trade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,12 @@ namespace PokemonPocket.Migrations
                     b.Property<int>("ToTrainer")
                         .HasColumnType("int");
 
+                    b.Property<int?>("TrainerId")
+                        .HasColumnType("int");
+
                     b.HasKey("TradeId");
+
+                    b.HasIndex("TrainerId");
 
                     b.ToTable("Trades");
                 });
@@ -96,9 +104,18 @@ namespace PokemonPocket.Migrations
                     b.Navigation("Trainer");
                 });
 
+            modelBuilder.Entity("PokemonPocket.Trade", b =>
+                {
+                    b.HasOne("PokemonPocket.Trainer", null)
+                        .WithMany("Trades")
+                        .HasForeignKey("TrainerId");
+                });
+
             modelBuilder.Entity("PokemonPocket.Trainer", b =>
                 {
                     b.Navigation("Pokemons");
+
+                    b.Navigation("Trades");
                 });
 #pragma warning restore 612, 618
         }

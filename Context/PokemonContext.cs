@@ -9,6 +9,7 @@ namespace PokemonPocket
 
         public DbSet<Pokemon> Pokemons { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
+        public DbSet<Trade> Trades { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
