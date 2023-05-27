@@ -59,7 +59,7 @@ namespace PokemonPocket
                 }
                 Console.WriteLine("(n). Create New Trainer");
                 Console.WriteLine("(q). Quit PokemonPocket");
-                String choice = input("Please only enter options listed: ");
+                String choice = input("Enter an option: ");
 
                 switch (choice.ToLower())
                 {
@@ -84,6 +84,7 @@ namespace PokemonPocket
                                 throw new Exception();
                             }
                         } catch (Exception) {
+                            Clear();
                             Console.WriteLine("The choice entered is invalid. Please try again.");
                         }
                         break;
@@ -111,9 +112,12 @@ namespace PokemonPocket
                 while (true)
                 {
                     Trainer trainer;
+                    int tradeCount = 0;
                     using (var context = new PokemonDataContext())
                     {
                         trainer = context.Trainers.Find(trainerId);
+                        // Check trade requests count
+                        tradeCount = context.Trades.Where(t => t.ToTrainer == trainerId).Count();
                     }
 
                     if (trainer == null)
@@ -128,10 +132,10 @@ namespace PokemonPocket
                     Console.WriteLine("(1). View " + trainer.Name + "'s Pokemon");
                     Console.WriteLine("(2). Edit Trainer Name");
                     Console.WriteLine("(3). Delete Trainer");
-                    Console.WriteLine("(4). View Trade Requests");
+                    Console.WriteLine("(4). View Trade Requests (" + tradeCount + ")");
                     Console.WriteLine("(5). Create Trade Request");
                     Console.WriteLine("(b). Main Menu");
-                    String choice = input("Please only enter options listed: ");
+                    String choice = input("Enter an option: ");
 
                     switch (choice.ToLower())
                     {
@@ -216,6 +220,9 @@ namespace PokemonPocket
                         context.Trainers.Remove(new Trainer { TrainerId = trainerId });
                         context.SaveChanges();
                     }
+                } else
+                {
+                    Clear();
                 }
             }
 
@@ -237,7 +244,7 @@ namespace PokemonPocket
                     Console.WriteLine("(2). List pokemon(s) in my pocket");
                     Console.WriteLine("(3). Check if I can evolve pokemon");
                     Console.WriteLine("(4). Evolve pokemon");
-                    String choice = input("Please only enter options [1 - 4] or 'b' to logout: ");
+                    String choice = input("Please only enter options [1 - 4] or 'b' to go back: ");
 
                     switch (choice.ToLower())
                     {
@@ -435,6 +442,7 @@ namespace PokemonPocket
                 using (var context = new PokemonDataContext())
                 {
                     List<Trade> list = context.Trades.Where(t => t.ToTrainer == trainerId).ToList();
+                    Console.WriteLine("Incoming Trade Requests:");
                     foreach (Trade t in list)
                     {
                         string from = context.Trainers.Find(t.FromTrainer).Name;
@@ -546,6 +554,13 @@ namespace PokemonPocket
                 using (var context = new PokemonDataContext())
                 {
                     from_t = context.Trainers.Find(trainerId).TrainerId;
+
+                    // Check if there are any trainers to trade with
+                    if (context.Trainers.Count() == 1)
+                    {
+                        Console.WriteLine("There are no other trainers to trade with...");
+                        return;
+                    }
 
                     // Check if the current trainer has any pokemon
                     if (context.Trainers.Include(t => t.Pokemons).FirstOrDefault(t => t.TrainerId == trainerId).Pokemons.Count() == 0)
