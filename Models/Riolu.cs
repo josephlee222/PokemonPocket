@@ -1,12 +1,12 @@
 ﻿namespace PokemonPocket
 {
-    public class Eevee:Pokemon
+    public class Riolu:Pokemon
     {
-        public Eevee(int Hp, int Exp) : base(Hp, Exp)
+        public Riolu(int Hp, int Exp) : base(Hp, Exp)
         {
-            Name = "Eevee";
-            Skill = "Run Away";
-            Damage = 20;
+            Name = "Riolu";
+            Skill = "Prankster";
+            Damage = 25;
         }
 
         public void calculateDamage(int damage_taken)

@@ -1,11 +1,11 @@
-﻿namespace PokemonPocket
+namespace PokemonPocket
 {
-    public class Eevee:Pokemon
+    public class Scorbunny:Pokemon
     {
-        public Eevee(int Hp, int Exp) : base(Hp, Exp)
+        public Scorbunny(int Hp, int Exp) : base(Hp, Exp)
         {
-            Name = "Eevee";
-            Skill = "Run Away";
+            Name = "Scorbunny";
+            Skill = "Libero";
             Damage = 20;
         }
 

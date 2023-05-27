@@ -26,9 +26,8 @@ namespace PokemonPocket
         public int Damage { get; set; }
         public virtual Trainer Trainer { get; set; }
 
-        public Pokemon(string name, int hp, int exp)
+        public Pokemon(int hp, int exp)
         { 
-            this.Name = name;
             this.Hp = hp;
             this.Exp = exp;
         }

@@ -27,10 +27,14 @@ namespace PokemonPocket
         static void Main(string[] args)
         {
             //PokemonMaster list for checking pokemon evolution availability.    
+            //Scorbunny evolves to Raboot at level 2 and Raboot evolves to Cinderace at level 3.
             List<PokemonMaster> pokemonMasters = new List<PokemonMaster>(){
                 new PokemonMaster("Pikachu", 2, "Raichu"),
                 new PokemonMaster("Eevee", 3, "Flareon"),
-                new PokemonMaster("Charmander", 1, "Charmeleon")
+                new PokemonMaster("Charmander", 1, "Charmeleon"),
+                new PokemonMaster("Riolu", 2, "Lucario"),
+                new PokemonMaster("Scorbunny", 2, "Raboot"),
+                new PokemonMaster("Raboot", 3, "Cinderace")
             };
 
             //Use "Environment.Exit(0);" if you want to implement an exit of the console program
@@ -300,13 +304,25 @@ namespace PokemonPocket
                         switch (name.ToLower())
                         {
                             case "pikachu":
-                                p = new Pikachu("Pikachu", Hp: hp, Exp: exp);
+                                p = new Pikachu(Hp: hp, Exp: exp);
                                 break;
                             case "charmander":
-                                p = new Charmander("Charmander", Hp: hp, Exp: exp);
+                                p = new Charmander(Hp: hp, Exp: exp);
                                 break;
                             case "eevee":
-                                p = new Eevee("Eevee", Hp: hp, Exp: exp);
+                                p = new Eevee(Hp: hp, Exp: exp);
+                                break;
+                            case "riolu":
+                                p = new Riolu(Hp: hp, Exp: exp);
+                                break;
+                            case "zeraora":
+                                p = new Zeraora(Hp: hp, Exp: exp);
+                                break;
+                            case "pachirisu":
+                                p = new Pachirisu(Hp: hp, Exp: exp);
+                                break;
+                            case "scorbunny":
+                                p = new Scorbunny(Hp: hp, Exp: exp);
                                 break;
                             default: throw new Exception("Pokemon name is not valid.");
 
@@ -621,6 +637,7 @@ namespace PokemonPocket
                 Console.WriteLine("My Pokemon available to trade:");
                 using (var context = new PokemonDataContext())
                 {
+                    // List all pokemon
                     var list = context.Trainers.Include(t => t.Pokemons).FirstOrDefault(x => x.TrainerId == trainerId).Pokemons.ToList();
                     foreach (Pokemon p in list)
                     {
